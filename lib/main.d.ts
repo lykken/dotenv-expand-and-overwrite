@@ -3,6 +3,7 @@
 
 export interface DotenvExpandOptions {
   ignoreProcessEnv?: boolean;
+  overwrite?: boolean;
   error?: Error;
   parsed?: {
     [name: string]: string;

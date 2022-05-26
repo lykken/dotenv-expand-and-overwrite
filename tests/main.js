@@ -11,6 +11,34 @@ const beforeEach = lab.beforeEach
 const dotenvExpand = require('../lib/main')
 
 describe('dotenv-expand', function () {
+  describe('dotenv-expand-and-overwrite', function () {
+    it('overwrites process.env if overwrite is true', function (done) {
+      process.env.SOME_ENV = 'production'
+      const dotenv = {
+        overwrite: true,
+        parsed: {
+          SOME_ENV: 'development'
+        }
+      }
+      const obj = dotenvExpand.expand(dotenv).parsed
+      obj.SOME_ENV.should.eql('development')
+      done()
+    })
+
+    it('does not overwrite process.env if overwrite is false', function (done) {
+      process.env.SOME_ENV = 'production'
+      const dotenv = {
+        overwrite: true,
+        parsed: {
+          SOME_ENV: 'development'
+        }
+      }
+      const obj = dotenvExpand.expand(dotenv).parsed
+      obj.SOME_ENV.should.eql('production')
+      done()
+    })
+  })
+
   describe('unit tests', function () {
     it('returns object', function (done) {
       const dotenv = { parsed: {} }
