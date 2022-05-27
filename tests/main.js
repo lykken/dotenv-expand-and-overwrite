@@ -11,34 +11,6 @@ const beforeEach = lab.beforeEach
 const dotenvExpand = require('../lib/main')
 
 describe('dotenv-expand', function () {
-  describe('dotenv-expand-and-overwrite', function () {
-    it('overwrites process.env if overwrite is true', function (done) {
-      process.env.SOME_ENV = 'production'
-      const dotenv = {
-        overwrite: true,
-        parsed: {
-          SOME_ENV: 'development'
-        }
-      }
-      const obj = dotenvExpand.expand(dotenv).parsed
-      obj.SOME_ENV.should.eql('development')
-      done()
-    })
-
-    it('does not overwrite process.env if overwrite is false', function (done) {
-      process.env.SOME_ENV = 'production'
-      const dotenv = {
-        overwrite: true,
-        parsed: {
-          SOME_ENV: 'development'
-        }
-      }
-      const obj = dotenvExpand.expand(dotenv).parsed
-      obj.SOME_ENV.should.eql('production')
-      done()
-    })
-  })
-
   describe('unit tests', function () {
     it('returns object', function (done) {
       const dotenv = { parsed: {} }
@@ -60,6 +32,52 @@ describe('dotenv-expand', function () {
 
       obj.BASIC_EXPAND.should.eql('basic')
       obj.BASIC_EXPAND_SIMPLE.should.eql('basic')
+      done()
+    })
+
+    it('expands environment variable and overwrites process.env when overwrite is true', function (done) {
+      process.env.ENV_VAR = 'will not last'
+      const dotenv = {
+        overwrite: true,
+        parsed: {
+          MORE: 'more',
+          ENV_VAR: 'even-${MORE}'
+        }
+      }
+      const obj = dotenvExpand.expand(dotenv).parsed
+
+      obj.ENV_VAR.should.eql('even-more')
+      process.env.ENV_VAR.should.eql('even-more')
+      done()
+    })
+
+    it('expands with default value, overwriting when overwrite is true', function (done) {
+      process.env.ENV_VAR = 'will not last'
+      const dotenv = {
+        overwrite: true,
+        parsed: {
+          ENV_VAR: '${DOES_NOT_EXIST:-default}'
+        }
+      }
+      const obj = dotenvExpand.expand(dotenv).parsed
+
+      obj.ENV_VAR.should.eql('default')
+      process.env.ENV_VAR.should.eql('default')
+      done()
+    })
+
+    it('expands with empty string when environment variable is missing and no default has been set, overwriting when overwrite is true', function (done) {
+      process.env.ENV_VAR = 'will not last'
+      const dotenv = {
+        overwrite: true,
+        parsed: {
+          ENV_VAR: '${DOES_NOT_EXIST_AND_NO_DEFAULT_PROVIDED}'
+        }
+      }
+      const obj = dotenvExpand.expand(dotenv).parsed
+
+      obj.ENV_VAR.should.eql('')
+      process.env.ENV_VAR.should.eql('')
       done()
     })
 
@@ -138,6 +156,20 @@ describe('dotenv-expand', function () {
       const obj = dotenvExpand.expand(dotenv).parsed
 
       obj.SOME_ENV.should.eql('production')
+      done()
+    })
+
+    it('overwrites preset variable when overwrite is true', function (done) {
+      process.env.SOME_ENV = 'production'
+      const dotenv = {
+        overwrite: true,
+        parsed: {
+          SOME_ENV: 'development'
+        }
+      }
+      const obj = dotenvExpand.expand(dotenv).parsed
+
+      obj.SOME_ENV.should.eql('development')
       done()
     })
 
