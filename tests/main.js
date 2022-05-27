@@ -35,7 +35,7 @@ describe('dotenv-expand', function () {
       done()
     })
 
-    it('expands environment variable and overwrites process.env when overwrite is true', function (done) {
+    it('expands environment variable and overwrites existing when overwrite is true', function (done) {
       process.env.ENV_VAR = 'will not last'
       const dotenv = {
         overwrite: true,
@@ -51,7 +51,7 @@ describe('dotenv-expand', function () {
       done()
     })
 
-    it('expands with default value, overwriting when overwrite is true', function (done) {
+    it('expands environment variable with default value and overwrites existing when overwrite is true', function (done) {
       process.env.ENV_VAR = 'will not last'
       const dotenv = {
         overwrite: true,
@@ -66,7 +66,7 @@ describe('dotenv-expand', function () {
       done()
     })
 
-    it('expands with empty string when environment variable is missing and no default has been set, overwriting when overwrite is true', function (done) {
+    it('expands environment variable with empty string and overwrites existing when overwrite is true', function (done) {
       process.env.ENV_VAR = 'will not last'
       const dotenv = {
         overwrite: true,
